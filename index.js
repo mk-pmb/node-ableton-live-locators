@@ -31,14 +31,27 @@ EX.scanLocatorsInXml = function (xml, opts, resutsRcv) {
 };
 
 
+EX.defaultAttConvert = {};
+EX.defaultAttConvert.locator = {
+  LomId: Number,
+  Time: Number,
+  IsSongStart: JSON.parse.bind(JSON),
+};
+
+
 EX.createLocatorsScanner = function (opts) {
   var ctx = { buf: '', skipForward: true }, rcvInputChunk;
   if (!opts) { opts = {}; }
-  ctx.tagStartRgx = String(opts.tagName || 'Locator') + '[/>\\s\\n]';
+  ctx.tagName = String(opts.tagName || 'Locator');
+  ctx.tagStartRgx = ctx.tagName + '[/>\\s\\n]';
   ctx.tagOpenRgx = new RegExp('<' + ctx.tagStartRgx, 'i');
   ctx.tagCloseRgx = new RegExp('</' + ctx.tagStartRgx, 'i');
   ctx.bufSize = (opts.bufSize || 128);
-  ctx.attribValuesOpts = { attrName: (opts.attrName || 'value') };
+  ctx.attrOpts = {
+    attrName: (opts.attrName || 'value'),
+    attrConvert: (opts.attrConvert ||
+      EX.defaultAttConvert[ctx.tagName.toLowerCase()]),
+  };
   rcvInputChunk = function (chunk) {
     var self = this, tags;
     ctx.buf += String(chunk || '');
@@ -50,7 +63,7 @@ EX.createLocatorsScanner = function (opts) {
         // this tag is not yet closed, wait for more content
         return;
       }
-      self.queue(EX.scanXmlAttribValues(tag[0], ctx.attribValuesOpts));
+      self.queue(EX.scanXmlAttribValues(tag[0], ctx.attrOpts));
     });
     if (ctx.skipForward) { ctx.buf = ctx.buf.substr(-ctx.bufSize); }
   };
@@ -68,7 +81,7 @@ EX.mkStrEqualChk = function (str) {
 
 
 EX.scanXmlAttribValues = function (xml, opts) {
-  var tagRgx, dataSet = {};
+  var tagRgx, dataSet = {}, attrConvs;
   if (!opts) { opts = {}; }
   tagRgx = new RegExp('<(' + EX.xmlIdentifierRgx +
     ')[\\s\\n]*(' + (opts.attrName || EX.xmlIdentifierRgx) +
@@ -83,7 +96,9 @@ EX.scanXmlAttribValues = function (xml, opts) {
     }
   }
   */
-  xml.replace(tagRgx, function (tagCode, tagName, attrName, attrValue) {
+  attrConvs = (opts.attrConvert || false);
+  if ('function' === typeof attrConvs) { attrConvs = { '*': attrConvs }; }
+  xml.replace(tagRgx, function (tagCode, tagName, attrName, attrVal) {
     var dataKey = tagName;
     if (opts.attrNameFilter) {
       if (!opts.attrNameFilter(attrName)) { return tagCode; }
@@ -93,7 +108,11 @@ EX.scanXmlAttribValues = function (xml, opts) {
         '" in XML input ' + xml);
     }
     try {
-      dataSet[dataKey] = xmlentities.decode(attrValue);
+      attrVal = xmlentities.decode(attrVal);
+      if (attrConvs) {
+        attrVal = (attrConvs[dataKey] || attrConvs['*'] || String)(attrVal);
+      }
+      dataSet[dataKey] = attrVal;
     } catch (xmlDecodeErr) {
       xmlDecodeErr.dataKey = dataKey;
       xmlDecodeErr.xmlInput = xml;

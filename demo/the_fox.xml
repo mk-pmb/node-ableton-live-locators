@@ -1,31 +1,74 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Locators> 
-  <Locator> 
-     <LomId Value="0" /> 
-     <Time Value="0" /> 
-     <Name Value="Ylvis: The Fox (Japanese Cover Version)" /> 
-     <Annotation Value="http://www.youtube.com/watch?v=H8xlLyoJMuM" />
-     <IsSongStart Value="true" /> 
-  </Locator> 
-  <Locator> 
-     <LomId Value="1" /> 
-     <Time Value="7" /> 
-     <Name Value="Dog" /> 
-     <Annotation Value="goes woof" /> 
-     <IsSongStart Value="false" /> 
-  </Locator> 
-  <Locator> 
-     <LomId Value="2" /> 
-     <Time Value="14" /> 
-     <Name Value="Cat" /> 
-     <Annotation Value="goes meow" /> 
-     <IsSongStart Value="false" /> 
-  </Locator> 
-  <Locator> 
-     <LomId Value="3" /> 
-     <Time Value="16" /> 
-     <Name Value="Bird" /> 
-     <Annotation Value="goes tweet" /> 
-     <IsSongStart Value="false" /> 
-  </Locator> 
-</Locators> 
+<?xml version="1.0" encoding="UTF-8"?>
+<Ableton MiscMetaData="...">
+  <LiveSet>
+    <OverwriteProtectionNumber Value="2304" />
+    <LomId Value="0" />
+    <LomIdView Value="0" />
+    <Tracks>
+      <!-- ... -->
+    </Tracks>
+    <MasterTrack>
+      <!-- ... -->
+    </MasterTrack>
+    <ViewStateFxSlotCount Value="4" />
+    <ViewStateSessionMixerHeight Value="120" />
+    <Locators>
+      <Locators>
+        <Locator>
+           <LomId Value="0" />
+           <Time Value="0" />
+           <Name Value="Ylvis: The Fox (Japanese Cover Version)" />
+           <Annotation Value="http://www.youtube.com/watch?v=H8xlLyoJMuM" />
+           <IsSongStart Value="true" />
+        </Locator>
+        <!-- random
+          intermezzo -->
+        <Locator>
+           <LomId Value="1" />
+           <Time Value="7" />
+           <Name Value="Dog" />
+           <Annotation Value="goes woof" />
+           <IsSongStart Value="false" />
+        </Locator>
+        <Locator>
+           <LomId Value="2" />
+           <Time Value="14" />
+           <Name Value="Cat" />
+           <Annotation Value="goes meow" />
+           <IsSongStart Value="false" />
+        </Locator>
+        <Locator>
+           <LomId Value="3" />
+           <Time Value="16" />
+           <Name Value="Bird" />
+           <Annotation Value="goes tweet" />
+           <IsSongStart Value="false" />
+        </Locator>
+        <!-- buffer split test
+          slowcat -I the_fox.xml -d 0.2 | tee /dev/stderr | nodejs ../index.js
+          -->
+      </Locators>
+      <!-- buffer split test -->
+    </Locators>
+    <!-- buffer split test -->
+    <DetailClipKeyMidis />
+    <TracksListWrapper LomId="0" />
+    <VisibleTracksListWrapper LomId="0" />
+    <ReturnTracksListWrapper LomId="0" />
+    <ScenesListWrapper LomId="0" />
+    <CuePointsListWrapper LomId="0" />
+    <ChooserBar Value="0" />
+    <Annotation Value="" />
+    <SoloOrPflSavedValue Value="true" />
+    <SoloInPlace Value="true" />
+    <CrossfadeCurve Value="2" />
+    <LatencyCompensation Value="2" />
+    <HighlightedTrackIndex Value="1" />
+    <GroovePool>
+      <Grooves />
+    </GroovePool>
+    <ArrangementOverdub Value="false" />
+    <UseWarperLegacyHiQMode Value="false" />
+    <!-- ... -->
+  </LiveSet>
+</Ableton>

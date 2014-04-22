@@ -1,6 +1,6 @@
 {
   "name": "ableton-live-locators",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "A way to extract the stuff you've typed into live: Notes, info text, the names of markers, etc.",
   "main": "index.js",
   "scripts": {

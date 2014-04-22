@@ -1,0 +1,23 @@
+{
+  "name": "ableton-live-locators",
+  "version": "0.0.2",
+  "description": "A way to extract the stuff you've typed into live: Notes, info text, the names of markers, etc.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mk-pmb/node-ableton-live-locators.git"
+  },
+  "bugs": {
+    "url": "http://github.com/mk-pmb/node-ableton-live-locators/issues"
+  },
+  "author": "M.K.",
+  "license": "ISC",
+  "keywords": [
+    "ableton",
+    "locator",
+    "xml"
+  ]
+}

@@ -4,10 +4,11 @@
 
 var EX = exports,
   hasOwn = Function.call.bind(Object.hasOwnProperty),
-  xmlentities = require('xml-entities');
+  xmlentities = require('xml-entities'),
+  through = require('through');
 
 
-EX.scanLocators = function (xml, opts, resutsRcv) {
+EX.scanLocatorsInXml = function (xml, opts, resutsRcv) {
   var locs;
   if (!opts) { opts = {}; }
   if ('function' === typeof opts) {
@@ -27,6 +28,33 @@ EX.scanLocators = function (xml, opts, resutsRcv) {
   }
   if (resutsRcv) { return resutsRcv(null, locs); }
   return locs;
+};
+
+
+EX.createLocatorsScanner = function (opts) {
+  var ctx = { buf: '', skipForward: true }, rcvInputChunk;
+  if (!opts) { opts = {}; }
+  ctx.tagStartRgx = String(opts.tagName || 'Locator') + '[/>\\s\\n]';
+  ctx.tagOpenRgx = new RegExp('<' + ctx.tagStartRgx, 'i');
+  ctx.tagCloseRgx = new RegExp('</' + ctx.tagStartRgx, 'i');
+  ctx.bufSize = (opts.bufSize || 128);
+  ctx.attribValuesOpts = { attrName: (opts.attrName || 'value') };
+  rcvInputChunk = function (chunk) {
+    var self = this, tags;
+    ctx.buf += String(chunk || '');
+    tags = ctx.buf.split(ctx.tagOpenRgx);
+    tags.forEach(function (tag) {
+      tag = tag.split(ctx.tagCloseRgx);
+      ctx.buf = tag.pop();
+      if (tag.length < 1) {
+        // this tag is not yet closed, wait for more content
+        return;
+      }
+      self.queue(EX.scanXmlAttribValues(tag[0], ctx.attribValuesOpts));
+    });
+    if (ctx.skipForward) { ctx.buf = ctx.buf.substr(-ctx.bufSize); }
+  };
+  return through(rcvInputChunk);
 };
 
 
@@ -78,7 +106,9 @@ EX.scanXmlAttribValues = function (xml, opts) {
 
 
 EX.runFromCLI = function () {
-  throw new Error('CLI mode not implemented');
+  process.stdin.pipe(EX.createLocatorsScanner()).on('data', function (loc) {
+    console.dir(loc);
+  });
 };
 
 

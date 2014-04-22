@@ -1,6 +1,6 @@
 {
   "name": "ableton-live-locators",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A way to extract the stuff you've typed into live: Notes, info text, the names of markers, etc.",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,9 @@
     "ableton",
     "locator",
     "xml"
-  ]
+  ],
+  "dependencies": {
+    "through": "^2.3.4",
+    "xml-entities": "0.0.1"
+  }
 }

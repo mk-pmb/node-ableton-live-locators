@@ -9,9 +9,9 @@ or other data hiding in some attribute of XML tags instead of inside them.
 
 Todo
 ----
-* [ ] improve README.md
-* [ ] support multiple values per tag
-* [ ] support attribute values quoted by apostrophe (`'`)
+* [_] improve README.md
+* [_] support multiple values per tag
+* [_] support attribute values quoted by apostrophe (`'`)
 
 
   [prob1558]: https://www.ableton.com/answers/export-text-from-live

@@ -7,40 +7,39 @@ var EX = exports,
   fs = require('fs'),
   pathLib = require('path'),
   demosDir = pathLib.dirname(module.filename),
+  zlib = require('zlib'),
   livelocators = require('../');
 
 
 EX.runFromCLI = function () {
   fs.readdir(demosDir, function rcvFilesList(err, files) {
-    var chkAlsRgx = /\.als$/i;
+    var fileCounts = { xml: 0, xmlgz: 0 },
+      xmlgzRgx = /\.(als|xml\.gz)$/i,
+      xmlRgx = /\.xml$/i;
     if (err) { throw err; }
-    chkAlsRgx = chkAlsRgx.exec.bind(chkAlsRgx);
-    files = files.filter(chkAlsRgx);
-    console.log('found ' + files.length + ' .als files.');
-    async.forEach(files, EX.withFileContents.bind(null, EX.parseAndShowAlsXml));
-  });
+    files.forEach(function (fn) {
+      var stream = null, ftype = null, locs = [];
+      if (xmlgzRgx.exec(fn)) { ftype = 'xmlgz'; }
+      if (xmlRgx.exec(fn)) { ftype = 'xml'; }
+      if (!ftype) { return; }
+      fileCounts[ftype] += 1;
+      stream = fs.createReadStream(pathLib.join(demosDir, fn), {
+        encoding: (ftype === 'xml' ? 'UTF-8' : null),
+        bufferSize: 16
+      });
+      if (ftype === 'xmlgz') {
+        stream = stream.pipe(zlib.createGunzip());
+      }
+      stream = stream.pipe(livelocators.createLocatorsScanner());
+      stream.on('data', function collect(data) { locs[locs.length] = data; });
+      stream.on('end', function display() {
+        console.log('locators in file "' + fn + '": ' +
+          JSON.stringify(locs, null, 2));
+      });
+    });  // with each file
+    console.log('files found: ' + JSON.stringify(fileCounts));
+  });  // scan dir
 };
-
-
-EX.withFileContents = function (whenRead, fn) {
-  if ('function' !== typeof whenRead) { whenRead = this; }
-  fs.readFile(pathLib.join(demosDir, fn), 'UTF-8', function (err, contents) {
-    if (err) {
-      console.error('failed to read "' + fn + '": ' + String(err));
-      return;
-    }
-    whenRead.call(fn, contents);
-  });
-};
-
-
-EX.parseAndShowAlsXml = function (xml) {
-  var fn = this,
-    locs = livelocators.scanLocators(xml);
-  console.log('Locators in file "' + fn + '": ' +
-    JSON.stringify(locs, null, 2));
-};
-
 
 
 
